@@ -1,0 +1,17 @@
+server: "locahost"
+port: 8080
+logFile: "server.log"
+path:
+  - backend
+  - 
+    - caption
+    - 
+      - aaa
+      - bbb
+    - deepdream
+    - styletransfer
+  - frontend
+  - 
+    - caption
+    - deepdream
+    - styletransfer

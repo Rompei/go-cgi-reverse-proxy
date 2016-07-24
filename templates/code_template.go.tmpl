@@ -1,0 +1,32 @@
+package main
+
+import (
+	"fmt"
+	"log"
+	"net/http"
+	"net/http/cgi"
+	"net/http/httputil"
+	"net/url"
+	"os"
+)
+
+func main() {
+
+  f, err := os.OpenFile("{{ .LogFile }}", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	defer f.Close()
+	log.SetOutput(f)
+
+	if err := cgi.Serve(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+    url, err := url.Parse("{{ .Server }}")
+		if err != nil {
+			log.Fatalln(err)
+		}
+		proxy := httputil.NewSingleHostReverseProxy(url)
+		proxy.ServeHTTP(w, r)
+	})); err != nil {
+		fmt.Println(err)
+	}
+}
