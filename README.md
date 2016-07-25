@@ -4,7 +4,7 @@
 
 - Build and install `go get github.com/Rompei/go-cgi-reverse-proxy`
 - Create [config file](https://github.com/Rompei/go-cgi-reverse-proxy/tree/master/config/config.yaml)
-- Execute command `go-cgi-reverse-proxy -c /path/to/config/file`
+- Execute command `go-cgi-reverse-proxy -c /path/to/config/file -r /path/to/proxy/root/directory`
 - Directories and executables are generated.
 
 ```
