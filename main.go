@@ -46,7 +46,7 @@ func main() {
 	if err != nil {
 		log.Fatal("Failed to load code template")
 	}
-	baseURL := strings.Replace(config.WebRoot, config.ProxyRoot, "", 1)
+	baseURL := strings.Replace(config.ProxyRoot, config.WebRoot, "", 1)
 	server := fmt.Sprintf("%s:%d", config.Server, config.Port)
 	tmplModel := NewTemplateModel(baseURL, server, config.LogFile)
 	var w bytes.Buffer
