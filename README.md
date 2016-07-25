@@ -2,9 +2,9 @@
 
 ## Usage
 
-- Build and install `go get github.com/Rompei/go-cgi-reverse-proxy && cd $GOPATH/src/github.com/Rompei/go-cgi-reverse-proxy && go install`
+- Build and install `go get github.com/Rompei/go-cgi-reverse-proxy`
 - Create [config file](https://github.com/Rompei/go-cgi-reverse-proxy/tree/master/config/config.yaml)
-- Execute command `go-cgi-reverse-proxy -c /path/to/config/file -r /path/to/root/directory`
+- Execute command `go-cgi-reverse-proxy -c /path/to/config/file`
 - Directories and executables are generated.
 
 ```

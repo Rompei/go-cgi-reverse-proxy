@@ -1,5 +1,7 @@
 server: "locahost"
 port: 8080
+webRoot: "/Users/rompei/go/src/github.com/Rompei"
+proxyRoot: "/Users/rompei/go/src/github.com/Rompei/go-cgi-reverse-proxy/root"
 logFile: "server.log"
 path:
   - backend

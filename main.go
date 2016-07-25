@@ -9,19 +9,18 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"strings"
 )
 
 // Options is struct of options.
 type Options struct {
-	rootDir string
-	config  string
+	config string
 }
 
 func main() {
 
 	var opts Options
 
-	flag.StringVar(&opts.rootDir, "r", ".", "Root of cgis")
 	flag.StringVar(&opts.config, "c", "config.yaml", "Path of config file")
 	flag.Parse()
 
@@ -38,7 +37,7 @@ func main() {
 	}
 
 	// Load path.
-	paths := buildSiteMap(opts.rootDir, config.Path)
+	paths := buildSiteMap(config.ProxyRoot, config.Path)
 	log.Printf("Path is found in %v", paths)
 
 	// Create source file.
@@ -47,7 +46,9 @@ func main() {
 	if err != nil {
 		log.Fatal("Failed to load code template")
 	}
-	tmplModel := NewTemplateModel(fmt.Sprintf("%s:%d", config.Server, config.Port), config.LogFile)
+	baseURL := strings.Replace(config.WebRoot, config.ProxyRoot, "", 1)
+	server := fmt.Sprintf("%s:%d", config.Server, config.Port)
+	tmplModel := NewTemplateModel(baseURL, server, config.LogFile)
 	var w bytes.Buffer
 	if err = codeTmpl.Execute(&w, tmplModel); err != nil {
 		log.Fatal("Failed to execute template.")

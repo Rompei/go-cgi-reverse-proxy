@@ -8,11 +8,14 @@ import (
 	"net/http/httputil"
 	"net/url"
 	"os"
+	"strings"
 )
+
+const BaseURL = "{{ .BaseURL }}"
 
 func main() {
 
-  f, err := os.OpenFile("{{ .LogFile }}", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	f, err := os.OpenFile("{{ .LogFile }}", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -20,11 +23,16 @@ func main() {
 	log.SetOutput(f)
 
 	if err := cgi.Serve(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-    url, err := url.Parse("{{ .Server }}")
+		target, err := url.Parse("{{ .Server }}")
 		if err != nil {
 			log.Fatalln(err)
 		}
-		proxy := httputil.NewSingleHostReverseProxy(url)
+		r.URL, err = url.Parse(strings.Replace(r.URL.String(), BaseURL, "", 1))
+		if err != nil {
+			log.Fatalln(err)
+		}
+
+		proxy := httputil.NewSingleHostReverseProxy(target)
 		proxy.ServeHTTP(w, r)
 	})); err != nil {
 		fmt.Println(err)

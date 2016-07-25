@@ -6,13 +6,15 @@ import (
 
 // TemplateModel is model of template engine.
 type TemplateModel struct {
+	BaseURL string
 	LogFile string
 	Server  string
 }
 
 // NewTemplateModel is constructor of TemplateModel.
-func NewTemplateModel(server, logFile string) *TemplateModel {
+func NewTemplateModel(baseURL, server, logFile string) *TemplateModel {
 	return &TemplateModel{
+		BaseURL: baseURL,
 		LogFile: logFile,
 		Server:  server,
 	}
