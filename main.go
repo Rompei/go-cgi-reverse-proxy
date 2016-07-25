@@ -9,12 +9,12 @@ import (
 	"log"
 	"os"
 	"os/exec"
-	"strings"
 )
 
 // Options is struct of options.
 type Options struct {
-	config string
+	config  string
+	rootDir string
 }
 
 func main() {
@@ -22,6 +22,7 @@ func main() {
 	var opts Options
 
 	flag.StringVar(&opts.config, "c", "config.yaml", "Path of config file")
+	flag.StringVar(&opts.rootDir, "r", ".", "Path to proxy root directory")
 	flag.Parse()
 
 	path, err := exec.LookPath("go")
@@ -37,7 +38,7 @@ func main() {
 	}
 
 	// Load path.
-	paths := buildSiteMap(config.ProxyRoot, config.Path)
+	paths := buildSiteMap(opts.rootDir, config.Path)
 	log.Printf("Path is found in %v", paths)
 
 	// Create source file.
@@ -46,9 +47,8 @@ func main() {
 	if err != nil {
 		log.Fatal("Failed to load code template")
 	}
-	baseURL := strings.Replace(config.ProxyRoot, config.WebRoot, "", 1)
 	server := fmt.Sprintf("%s:%d", config.Server, config.Port)
-	tmplModel := NewTemplateModel(baseURL, server, config.LogFile)
+	tmplModel := NewTemplateModel(config.ProxyRoot, server, config.LogFile)
 	var w bytes.Buffer
 	if err = codeTmpl.Execute(&w, tmplModel); err != nil {
 		log.Fatal("Failed to execute template.")
