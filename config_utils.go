@@ -10,7 +10,6 @@ type Config struct {
 	Server    string        `yaml:"server"`
 	Port      uint          `yaml:"port"`
 	ProxyRoot string        `yaml:"proxyRoot"`
-	LogFile   string        `yaml:"logFile"`
 	Path      []interface{} `yaml:"path"`
 }
 

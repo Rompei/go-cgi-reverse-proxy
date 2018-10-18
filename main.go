@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"log"
 	"os"
@@ -43,12 +42,12 @@ func main() {
 
 	// Create source file.
 	log.Println("Creating source file...")
-	codeTmpl, err := loadTemplateFromBinary("templates/code_template.go.tmpl")
+	codeTmpl, err := loadTemplateFromBinary("code_template.go.tmpl")
 	if err != nil {
 		log.Fatal("Failed to load code template")
 	}
 	server := fmt.Sprintf("%s:%d", config.Server, config.Port)
-	tmplModel := NewTemplateModel(config.ProxyRoot, server, config.LogFile)
+	tmplModel := NewTemplateModel(config.ProxyRoot, server)
 	var w bytes.Buffer
 	if err = codeTmpl.Execute(&w, tmplModel); err != nil {
 		log.Fatal("Failed to execute template.")
@@ -64,17 +63,16 @@ func main() {
 
 	// Build executable.
 	log.Println("Building executable...")
-	if err = exec.Command("go", "build", "-o", "index.cgi").Run(); err != nil {
+	if err = exec.Command("go", "build", "-o", "tmp.cgi").Run(); err != nil {
 		log.Fatalf("Failed to build source file %s", err)
 	}
-	defer os.Remove("index.cgi")
+	defer os.Remove("tmp.cgi")
 
 	// Open executable
-	bin, err := os.Open("index.cgi")
+	bin, err := ioutil.ReadFile("tmp.cgi")
 	if err != nil {
-		panic(err)
+		log.Fatal("Failed to open executable.")
 	}
-	defer bin.Close()
 
 	// Copy executable for each directory.
 	log.Println("Installing executable")
@@ -84,12 +82,7 @@ func main() {
 		if err = os.MkdirAll(path, 0755); err != nil {
 			log.Fatalf("Failed to make directory: %s", path)
 		}
-		dst, err := os.OpenFile(target, os.O_WRONLY|os.O_CREATE, 0755)
-		if err != nil {
-			panic(err)
-		}
-		defer dst.Close()
-		if _, err := io.Copy(dst, bin); err != nil {
+		if err := ioutil.WriteFile(target, bin, 0755); err != nil {
 			log.Fatal("Failed to copy executable.")
 		}
 	}

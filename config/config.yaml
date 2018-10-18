@@ -1,7 +1,6 @@
 server: "http://locahost"
 port: 8080
 proxyRoot: "/proxy/root"
-logFile: "server.log"
 path:
   - backend
   - 
